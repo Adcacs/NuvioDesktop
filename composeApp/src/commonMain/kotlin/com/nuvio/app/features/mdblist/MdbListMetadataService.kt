@@ -68,6 +68,20 @@ object MdbListMetadataService {
         if (ratingsRepository.isInitialized()) repository.clearCache()
     }
 
+    /** Fetch the MAL community score regardless of which badges are displayed on details. */
+    internal suspend fun getMalRating(type: String, itemId: String, settings: MdbListSettings): Double? {
+        if (!settings.isActive) return null
+        val credential = settings.credential ?: return null
+        // Do not guess by title or accidentally interpret a MAL/TMDB ID as an IMDb ID.
+        val imdbId = itemId.trim().takeIf { imdbRegex.matches(it) } ?: return null
+        return repository.getRatings(
+            mediaType = toMdbListMediaType(type),
+            imdbId = imdbId,
+            credential = credential,
+            providers = listOf(PROVIDER_MAL),
+        ).firstOrNull { it.source == PROVIDER_MAL }?.value
+    }
+
     private fun extractImdbId(value: String?): String? {
         if (value.isNullOrBlank()) return null
         return imdbRegex.find(value)?.value

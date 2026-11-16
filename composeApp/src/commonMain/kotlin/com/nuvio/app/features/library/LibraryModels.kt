@@ -78,7 +78,7 @@ fun MetaDetails.toLibraryItem(savedAtEpochMs: Long): LibraryItem =
         imdbRating = imdbRating,
         genres = genres,
         posterShape = PosterShape.Poster,
-        imdbId = id.takeIf { it.startsWith("tt") },
+        imdbId = imdbId?.takeIf { it.isNotBlank() } ?: id.takeIf { it.startsWith("tt") },
         savedAtEpochMs = savedAtEpochMs,
     )
 

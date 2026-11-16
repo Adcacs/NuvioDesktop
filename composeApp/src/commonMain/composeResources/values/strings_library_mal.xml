@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_sort_mal_desc">MyAnimeList: highest rated</string>
+    <string name="library_sort_mal_asc">MyAnimeList: lowest rated</string>
+    <string name="library_mal_configuration">Enable MDBList ratings and connect your account or enter an API key in Settings → Integrations to sort by MyAnimeList score.</string>
+    <string name="library_mal_loading">Loading MyAnimeList scores: %1$d / %2$d</string>
+    <string name="library_mal_summary">MyAnimeList scores available for %1$d / %2$d titles. Titles without a score appear last.</string>
+</resources>

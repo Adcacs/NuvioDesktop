@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_sort_mal_desc">MyAnimeList : meilleures notes</string>
+    <string name="library_sort_mal_asc">MyAnimeList : notes croissantes</string>
+    <string name="library_mal_configuration">Activez les notes MDBList et connectez votre compte ou renseignez une clé API dans Paramètres → Intégrations pour trier par note MyAnimeList.</string>
+    <string name="library_mal_loading">Chargement des notes MyAnimeList : %1$d / %2$d</string>
+    <string name="library_mal_summary">Notes MyAnimeList disponibles pour %1$d / %2$d titres. Les titres sans note apparaissent à la fin.</string>
+</resources>

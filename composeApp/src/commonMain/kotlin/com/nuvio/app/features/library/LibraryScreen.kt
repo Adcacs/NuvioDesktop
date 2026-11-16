@@ -186,14 +186,20 @@ fun LibraryScreen(
             ?: uiState.sections.firstOrNull()?.type)
     }
     val providerOrders = rememberLibraryProviderOrders(uiState.sourceMode, orderListKeys, effectiveSortOption)
+    val ratingItems = remember(uiState.sections, sourceMode, orderListKeys, uiState.sourceMode) {
+        if (sourceMode != LibraryViewMode.Saved) emptyList()
+        else uiState.sections.filter { !isRemoteSource || it.type in orderListKeys }.flatMap { it.items }
+    }
+    val malRatings = rememberLibraryMalRatings(ratingItems, effectiveSortOption)
     val visibleSortOption = if (providerOrders.failed) LibrarySortOption.DEFAULT else effectiveSortOption
-    val sortedSections = remember(uiState.sections, displaySettings, uiState.sourceMode, sourceMode, providerOrders) {
+    val sortedSections = remember(uiState.sections, displaySettings, uiState.sourceMode, sourceMode, providerOrders, malRatings.scores) {
         if (sourceMode == LibraryViewMode.Saved && displaySettings.layoutMode == LibraryLayoutMode.HORIZONTAL) {
             sortLibrarySections(
                 sections = uiState.sections,
                 selected = visibleSortOption,
                 sourceMode = uiState.sourceMode,
                 providerOrders = providerOrders.ranks,
+                malRatings = malRatings.scores,
             )
         } else {
             emptyList()
@@ -207,6 +213,7 @@ fun LibraryScreen(
         displaySettings,
         sourceMode,
         providerOrders,
+        malRatings.scores,
     ) {
         if (sourceMode == LibraryViewMode.Saved && displaySettings.layoutMode == LibraryLayoutMode.VERTICAL) {
             buildLibraryVerticalProjection(
@@ -216,6 +223,7 @@ fun LibraryScreen(
                 selectedType = selectedLibraryType,
                 sortOption = visibleSortOption,
                 providerOrders = providerOrders.ranks,
+                malRatings = malRatings.scores,
             )
         } else {
             LibraryVerticalProjection(
@@ -516,6 +524,11 @@ fun LibraryScreen(
                                 modifier = libraryContentTransitionModifier()
                                     .padding(horizontal = 16.dp),
                             )
+                        }
+                        if (effectiveSortOption.isMalRatingSort) {
+                            item(key = "library-mal-rating-status") {
+                                LibraryMalRatingStatus(malRatings, Modifier.padding(horizontal = 16.dp))
+                            }
                         }
                         when (displaySettings.layoutMode) {
                             LibraryLayoutMode.HORIZONTAL -> librarySections(

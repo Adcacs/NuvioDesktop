@@ -22,6 +22,8 @@ enum class LibrarySortOption {
     RELEASED_ASC,
     TITLE_ASC,
     TITLE_DESC,
+    MAL_RATING_DESC,
+    MAL_RATING_ASC,
 }
 
 data class LibraryDisplaySettingsUiState(
@@ -112,6 +114,7 @@ internal fun sortLibraryItems(
     sourceMode: LibrarySourceMode,
     listKey: String? = null,
     providerOrder: Map<String, Int>? = null,
+    malRatings: Map<String, Double> = emptyMap(),
 ): List<LibraryItem> =
     when (effectiveLibrarySortOption(selected, sourceMode)) {
         LibrarySortOption.DEFAULT -> items.sortedWith(
@@ -149,6 +152,16 @@ internal fun sortLibraryItems(
             compareByDescending<LibraryItem> { libraryTitleSortKey(it) }
                 .thenBy { it.id },
         )
+        LibrarySortOption.MAL_RATING_DESC, LibrarySortOption.MAL_RATING_ASC -> items.sortedWith(
+            compareBy<LibraryItem> { validLibraryMalRating(malRatings[libraryDisplayItemKey(it)]) == null }
+                .thenBy {
+                    val score = validLibraryMalRating(malRatings[libraryDisplayItemKey(it)]) ?: 0.0
+                    if (selected == LibrarySortOption.MAL_RATING_DESC) -score else score
+                }
+                .thenBy { libraryTitleSortKey(it) }
+                .thenBy { it.type }
+                .thenBy { it.id },
+        )
     }
 
 internal fun sortLibrarySections(
@@ -156,9 +169,10 @@ internal fun sortLibrarySections(
     selected: LibrarySortOption,
     sourceMode: LibrarySourceMode,
     providerOrders: Map<String, Map<String, Int>> = emptyMap(),
+    malRatings: Map<String, Double> = emptyMap(),
 ): List<LibrarySection> =
     sections.map { section ->
-        section.copy(items = sortLibraryItems(section.items, selected, sourceMode, section.type, providerOrders[section.type]))
+        section.copy(items = sortLibraryItems(section.items, selected, sourceMode, section.type, providerOrders[section.type], malRatings))
     }
 
 internal fun buildLibraryVerticalProjection(
@@ -168,6 +182,7 @@ internal fun buildLibraryVerticalProjection(
     selectedType: String?,
     sortOption: LibrarySortOption,
     providerOrders: Map<String, Map<String, Int>> = emptyMap(),
+    malRatings: Map<String, Double> = emptyMap(),
 ): LibraryVerticalProjection {
     val availableSections = if (sourceMode.isRemoteTrackingSource) sections else emptyList()
     val selectedSection = if (sourceMode.isRemoteTrackingSource) {
@@ -207,6 +222,7 @@ internal fun buildLibraryVerticalProjection(
         sourceMode = sourceMode,
         listKey = selectedSection?.type,
         providerOrder = providerOrders[selectedSection?.type],
+        malRatings = malRatings,
     ).mapNotNull { item -> entryByKey[libraryDisplayItemKey(item)] }
 
     return LibraryVerticalProjection(

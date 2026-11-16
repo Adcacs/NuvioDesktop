@@ -56,6 +56,8 @@ class LibraryDisplaySettingsTest {
             LibrarySortOption.RELEASED_ASC to listOf("zulu", "bravo", "alpha"),
             LibrarySortOption.TITLE_ASC to listOf("alpha", "bravo", "zulu"),
             LibrarySortOption.TITLE_DESC to listOf("zulu", "bravo", "alpha"),
+            LibrarySortOption.MAL_RATING_DESC to listOf("alpha", "bravo", "zulu"),
+            LibrarySortOption.MAL_RATING_ASC to listOf("alpha", "bravo", "zulu"),
         )
         assertEquals(LibrarySortOption.entries.toSet(), expected.keys)
         for ((option, ids) in expected) {

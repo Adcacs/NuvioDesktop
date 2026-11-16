@@ -23,6 +23,30 @@ import kotlin.test.assertTrue
 class LibraryCatalogStateTest {
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     @Test
+    fun `view all follows MAL score and membership updates without dropping unrated titles`() = runTest {
+        val alpha = item("alpha")
+        val zulu = item("zulu")
+        val library = MutableStateFlow(state(listOf(alpha, zulu)))
+        val ratings = MutableStateFlow(com.nuvio.app.features.library.LibraryMalRatings(isLoading = true))
+        val seen = mutableListOf<CatalogUiState>()
+        backgroundScope.launch {
+            library.libraryCatalogStates(target().copy(sortOption = LibrarySortOption.MAL_RATING_DESC), malRatings = ratings)
+                .collect { seen += it }
+        }
+        runCurrent()
+        assertTrue(seen.last().isLoading)
+        assertEquals(2, seen.last().items.size)
+        ratings.value = com.nuvio.app.features.library.LibraryMalRatings(scores = mapOf("movie:zulu" to 9.0))
+        runCurrent()
+        assertFalse(seen.last().isLoading)
+        assertEquals(listOf("zulu", "alpha"), seen.last().items.map { it.id })
+        library.value = state(listOf(alpha))
+        runCurrent()
+        assertEquals(listOf("alpha"), seen.last().items.map { it.id })
+    }
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
     fun `view all uses provider added orders and follows order and membership updates`() = runTest {
         val section = "mdblist:list:7"
         val alpha = item("alpha").copy(savedAtEpochMs = 0)

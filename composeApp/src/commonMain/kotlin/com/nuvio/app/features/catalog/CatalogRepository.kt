@@ -102,6 +102,7 @@ object CatalogRepository {
                 LibraryRepository.ensureLoaded()
                 LibraryRepository.uiState.libraryCatalogStates(
                     target, LibraryRepository.uiState.libraryCatalogOrders(target),
+                    LibraryRepository.uiState.libraryCatalogMalRatings(target),
                 ).collect { state ->
                     if (activeRequest != request) return@collect
                     CustomPosterUrlRepository.ensureLoaded()
