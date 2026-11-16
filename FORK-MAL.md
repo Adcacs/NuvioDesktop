@@ -3,6 +3,24 @@
 Modification indépendante basée sur `NuvioMedia/NuvioDesktop`, branche `Dev`,
 commit `c8ee7621542c2d55e3650e3bb263ed69027cbaa4`. Licence GPL-3.0 conservée.
 
+## Application Windows disponible — 16 novembre 2026
+
+La [compilation Windows complète](https://github.com/Adcacs/NuvioDesktop/actions/runs/43845951303)
+a réussi sur le commit `62a48aed8cd266ab9e17915437cb7cc21f4b74d8`.
+Les **27 tests desktop passent**, sans échec ni test ignoré.
+
+- [Version portable](https://github.com/Adcacs/NuvioDesktop/actions/runs/43845951303/artifacts/14215213910) : extraire tout le ZIP, puis ouvrir `Nuvio.exe`.
+- [Installateur MSI](https://github.com/Adcacs/NuvioDesktop/actions/runs/43845951303/artifacts/14215836667).
+- SHA-256 du ZIP portable : `5331906b98cb8ded1c6cf8726ccf563ecb9d2dbaaee728dfaccab63c4c256a0b`.
+
+Le ZIP portable téléchargé a été vérifié et contient l'exécutable et son runtime
+Java. Un lancement local de 12 secondes atteint le code Compose, mais l'environnement
+de vérification interdit l'accès au registre Windows utilisé par les préférences
+Java/Supabase. L'interface, la connexion et la lecture vidéo ne sont donc pas validées
+par cet essai. Aucun compte personnel n'a été utilisé pour ce test.
+
+Les résultats du 15 novembre plus bas décrivent les essais locaux antérieurs.
+
 ## Utilisation
 
 1. Dans Paramètres → Intégrations, activer les notes MDBList et renseigner une
@@ -61,7 +79,7 @@ Il démarre également sur les pushes vers cette branche si GitHub Actions est a
 L'artefact `Nuvio-Desktop-MAL-Portable-Windows` contient `Nuvio.exe` et son runtime
 Java. Extraire tout le ZIP dans un dossier puis ouvrir `Nuvio.exe` ; conserver les
 sous-dossiers `app` et `runtime` à côté de l'exécutable. Cette version portable
-ne nécessite pas l'installation du MSI. Elle n'a pas encore été produite ni testée.
+ne nécessite pas l'installation du MSI. Voir le résultat de compilation ci-dessus.
 
 Pour copier les sources dans `C:\codes\NuvioDesktop-MAL`, lancer manuellement
 `Copier-vers-Codes.ps1` depuis le dossier actuel dans PowerShell. Le script refuse
